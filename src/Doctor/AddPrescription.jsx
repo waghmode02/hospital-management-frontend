@@ -7,6 +7,8 @@ const AddPrescription = () => {
   const [medication, setMedication] = useState({ name: "", dosage: "", frequency: "" });
   const [medications, setMedications] = useState([]);
   const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
 
   const handleAddMedication = () => {
     if (medication.name && medication.dosage && medication.frequency) {
@@ -15,8 +17,16 @@ const AddPrescription = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleRemoveMedication = (index) => {
+    const updatedMedications = medications.filter((_, i) => i !== index);
+    setMedications(updatedMedications);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+
     const prescription = {
       patientName,
       doctorName,
@@ -24,9 +34,27 @@ const AddPrescription = () => {
       medications,
       notes,
     };
-    console.log("Prescription submitted:", prescription);
-    // You can send this data to an API or process it further.
-    resetForm();
+
+    try {
+      const response = await fetch("http://localhost:3000/api/prescription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(prescription),
+      });
+
+      if (response.ok) {
+        setMessage({ type: "success", text: "Prescription submitted successfully!" });
+        resetForm();
+      } else {
+        setMessage({ type: "error", text: "Failed to submit prescription. Try again." });
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Error submitting prescription." });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetForm = () => {
@@ -41,7 +69,15 @@ const AddPrescription = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-xl">
       <h1 className="text-2xl font-bold mb-6 text-center">Add Prescription</h1>
+
+      {message && (
+        <div className={`mb-4 p-3 text-white rounded-lg ${message.type === "success" ? "bg-green-500" : "bg-red-500"}`}>
+          {message.text}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
+        {/* Patient & Doctor Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium mb-2">Patient Name</label>
@@ -49,7 +85,7 @@ const AddPrescription = () => {
               type="text"
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Enter patient name"
               required
             />
@@ -60,7 +96,7 @@ const AddPrescription = () => {
               type="text"
               value={doctorName}
               onChange={(e) => setDoctorName(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Enter doctor name"
               required
             />
@@ -71,12 +107,13 @@ const AddPrescription = () => {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
         </div>
 
+        {/* Medication Input Fields */}
         <div className="mb-4">
           <h2 className="text-lg font-semibold mb-2">Medications</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -84,21 +121,21 @@ const AddPrescription = () => {
               type="text"
               value={medication.name}
               onChange={(e) => setMedication({ ...medication, name: e.target.value })}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Medication Name"
             />
             <input
               type="text"
               value={medication.dosage}
               onChange={(e) => setMedication({ ...medication, dosage: e.target.value })}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Dosage (e.g., 500mg)"
             />
             <input
               type="text"
               value={medication.frequency}
               onChange={(e) => setMedication({ ...medication, frequency: e.target.value })}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Frequency (e.g., twice a day)"
             />
           </div>
@@ -111,6 +148,7 @@ const AddPrescription = () => {
           </button>
         </div>
 
+        {/* Medication List */}
         {medications.length > 0 && (
           <div className="mb-4">
             <h3 className="text-lg font-semibold mb-2">Medications List</h3>
@@ -120,6 +158,7 @@ const AddPrescription = () => {
                   <th className="px-4 py-2 border">Name</th>
                   <th className="px-4 py-2 border">Dosage</th>
                   <th className="px-4 py-2 border">Frequency</th>
+                  <th className="px-4 py-2 border">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,6 +167,15 @@ const AddPrescription = () => {
                     <td className="px-4 py-2 border">{med.name}</td>
                     <td className="px-4 py-2 border">{med.dosage}</td>
                     <td className="px-4 py-2 border">{med.frequency}</td>
+                    <td className="px-4 py-2 border text-center">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMedication(index)}
+                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                      >
+                        Remove
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -135,17 +183,19 @@ const AddPrescription = () => {
           </div>
         )}
 
+        {/* Notes */}
         <div className="mb-4">
           <label className="block text-sm font-medium mb-2">Additional Notes</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             placeholder="Enter any additional notes"
             rows="4"
           ></textarea>
         </div>
 
+        {/* Buttons */}
         <div className="flex justify-end space-x-4">
           <button
             type="button"
@@ -156,9 +206,10 @@ const AddPrescription = () => {
           </button>
           <button
             type="submit"
-            className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+            className={`px-6 py-2 text-white rounded-lg ${loading ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"}`}
+            disabled={loading}
           >
-            Submit
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>

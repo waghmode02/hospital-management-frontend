@@ -1,0 +1,111 @@
+/* Define the bounce animation */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Apply the bounce animation to the phone icon */
+.phone-icon {
+  animation: bounce 1s ease infinite;
+}
+/* Style for header on mobile view */
+@media (max-width: 768px) {
+  .header-logo {
+    display: flex;
+    flex-direction: row; /* Ensure logo and text are in a single row */
+    align-items: center;
+  }
+
+  .header-logo img {
+    height: 3rem; /* Adjust logo size for mobile */
+  }
+
+  .header-logo span {
+    font-size: 0.875rem; /* Adjust text size for mobile */
+    margin-left: 0.5rem; /* Space between logo and text */
+  }
+
+  .phone-icon {
+    font-size: 1rem; /* Adjust the phone icon size for mobile */
+  }
+
+  .phone-container {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Align to the right side */
+  }
+
+  .menu-button {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem; /* Space between phone icon and menu button */
+  }
+
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .mobile-menu ul {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  .mobile-menu li {
+    width: 100%;
+    text-align: center;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+  }
+}
+/* Header background transition */
+header {
+  transition: background-color 0.3s ease;
+}
+
+header:hover {
+  background-color: #f1f5f9; /* Light gray background on hover */
+}
+
+/* Navigation link styles */
+.nav-link {
+  transition: color 0.3s ease, border-bottom 0.3s ease, background-color 0.3s ease;
+}
+
+/* Navigation link hover effect */
+.nav-link:hover {
+  color: #007bff; /* Primary color for text on hover */
+  border-bottom: 2px solid #007bff; /* Blue underline on hover */
+  background-color: rgba(0, 123, 255, 0.1); /* Light blue background on hover */
+}
+
+
+
+/* Phone container hover effect */
+.phone-container a:hover {
+  background-color: #0056b3; /* Darker blue background for hover */
+  color: #ffffff; /* White text color on hover */
+  transition: background-color 0.3s ease;
+}
+
+/* Phone icon hover effect */
+.phone-icon:hover {
+  background-color: #ffcc00; /* Yellow background on hover */
+  transform: scale(1.1); /* Slightly scale up on hover */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}

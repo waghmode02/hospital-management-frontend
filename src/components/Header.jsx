@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPhone } from "@fortawesome/free-solid-svg-icons";
+import { faAmbulance } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
 import "../style/header.css";
 
@@ -20,28 +20,31 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 bg-white z-50 shadow-md">
       <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+          {/* Logo */}
           <Link to="/" className="flex items-center header-logo">
-          
             <span className="hidden lg:block self-center text-xl font-semibold">
-              𝐇𝐨𝐬𝐩𝐢𝐭𝐚𝐥 𝐌𝐚𝐧𝐚𝐠𝐞𝐦𝐞𝐧𝐭 𝐒𝐲𝐬𝐭𝐞𝐦
+              Hospital Resource Management
             </span>
           </Link>
-          <div className="flex items-center lg:order-2 phone-container">
+
+          {/* Emergency Contact Section */}
+          <div className="flex items-center lg:order-2">
             <a
-              href="tel:+911234567890"
-              className="text-black hover:bg-primary-700 bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none transition-colors duration-300"
-              id="phone"
+              href="tel:+911020304050"
+              className="text-black font-medium rounded-lg text-sm px-4 py-2 mr-2 flex items-center transition-transform duration-300 hover:scale-110 ambulance-btn"
             >
               <FontAwesomeIcon
-                icon={faPhone}
-                className="mr-1 bg-green-600 text-white p-1 rounded-full phone-icon"
+                icon={faAmbulance}
+                className="mr-2 text-red-600 text-xl animate-pulse"
               />
-              <span className="ml-2 text-sm lg:block">+91 1234567890</span>
+              <span className="text-sm lg:block">Emergency: +91 1020304050</span>
             </a>
+
+            {/* Mobile Menu Button */}
             <button
               onClick={toggleMenu}
               type="button"
-              className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 menu-button transition-colors duration-300"
+              className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-300"
               aria-controls="mobile-menu-2"
               aria-expanded={isMenuOpen}
             >
@@ -72,6 +75,8 @@ const Header = () => {
               </svg>
             </button>
           </div>
+
+          {/* Navigation Menu */}
           <div
             className={`justify-between items-center w-full lg:flex lg:w-auto lg:order-1 ${
               isMenuOpen ? "flex" : "hidden"
@@ -79,15 +84,13 @@ const Header = () => {
             id="mobile-menu-2"
           >
             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
-              <li
-                className="sm:hidden nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-colors duration-300"
-              >
+              <li className="sm:hidden nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100">
                 𝐇𝐨𝐬𝐩𝐢𝐭𝐚𝐥 𝐌𝐚𝐧𝐚𝐠𝐞𝐦𝐞𝐧𝐭 𝐒𝐲𝐬𝐭𝐞𝐦
               </li>
               <li>
                 <Link
                   to="/"
-                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-colors duration-300"
+                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-all duration-300"
                 >
                   Home
                 </Link>
@@ -95,7 +98,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/admin"
-                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-colors duration-300"
+                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-all duration-300"
                 >
                   Admin
                 </Link>
@@ -103,7 +106,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/doctors"
-                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-colors duration-300"
+                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-all duration-300"
                 >
                   Doctors
                 </Link>
@@ -111,7 +114,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/appointments"
-                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-colors duration-300"
+                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-all duration-300"
                 >
                   Appointments
                 </Link>
@@ -119,7 +122,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/contact"
-                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-colors duration-300"
+                  className="nav-link block py-2 pr-4 pl-3 text-black rounded border-b border-gray-100 hover:bg-gray-100 transition-all duration-300"
                 >
                   Contact
                 </Link>

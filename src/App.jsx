@@ -6,6 +6,7 @@ import Home from "./components/Home"
 import Admin from "./components/Admin.jsx"
 import Doctor from './Doctor/Doctor.jsx';
 import AllAppointments from './components/AllAppointments.jsx'
+import ContactUs from './components/ContactUs.jsx';
 function App() {
   return (
     <Router>
@@ -15,6 +16,7 @@ function App() {
         <Route  path="/admin" element={<Admin/>}/>
         <Route path="/doctors" element={<Doctor />} />
         <Route path="/appointments" element={<AllAppointments/>} />
+        <Route path='/contact' element={<ContactUs/>}/>
 
       </Routes>
     </Router>

@@ -1,31 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ViewPrescription = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [prescriptions, setPrescriptions] = useState([
-    {
-      id: 1,
-      patientName: "John Doe",
-      doctorName: "Dr. Smith",
-      date: "2025-01-20",
-      medications: [
-        { name: "Paracetamol", dosage: "500mg", frequency: "Twice a day" },
-        { name: "Ibuprofen", dosage: "200mg", frequency: "Once a day" },
-      ],
-      notes: "Take medications after meals.",
-    },
-    {
-      id: 2,
-      patientName: "Jane Smith",
-      doctorName: "Dr. Brown",
-      date: "2025-01-22",
-      medications: [
-        { name: "Amoxicillin", dosage: "250mg", frequency: "Three times a day" },
-      ],
-      notes: "Finish the course of antibiotics.",
-    },
-  ]);
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  // Fetch prescriptions from API
+  useEffect(() => {
+    const fetchPrescriptions = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/prescriptions");
+        if (!response.ok) {
+          throw new Error("Failed to fetch prescriptions");
+        }
+        const data = await response.json();
+        setPrescriptions(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrescriptions();
+  }, []);
+
+  // Handle prescription deletion
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this prescription?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/prescriptions/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete prescription");
+      }
+
+      // Remove deleted prescription from state
+      setPrescriptions(prescriptions.filter((prescription) => prescription._id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  // Filter prescriptions based on search term
   const filteredPrescriptions = prescriptions.filter((prescription) =>
     prescription.patientName.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -45,11 +67,15 @@ const ViewPrescription = () => {
         />
       </div>
 
+      {/* Display loading and error messages */}
+      {loading && <p className="text-center text-gray-600">Loading prescriptions...</p>}
+      {error && <p className="text-center text-red-600">{error}</p>}
+
       {/* Prescription List */}
-      {filteredPrescriptions.length > 0 ? (
+      {!loading && !error && filteredPrescriptions.length > 0 ? (
         filteredPrescriptions.map((prescription) => (
           <div
-            key={prescription.id}
+            key={prescription._id}
             className="mb-6 p-4 border rounded-lg shadow-sm hover:shadow-md"
           >
             <h2 className="text-lg font-bold mb-2">
@@ -80,10 +106,18 @@ const ViewPrescription = () => {
             </table>
             <h3 className="text-md font-semibold mb-2">Notes:</h3>
             <p className="text-sm text-gray-700">{prescription.notes}</p>
+
+            {/* Delete Button */}
+            <button
+              onClick={() => handleDelete(prescription._id)}
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition"
+            >
+              Delete
+            </button>
           </div>
         ))
       ) : (
-        <p className="text-center text-gray-600">No prescriptions found.</p>
+        !loading && !error && <p className="text-center text-gray-600">No prescriptions found.</p>
       )}
     </div>
   );

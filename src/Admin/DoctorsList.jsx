@@ -1,64 +1,94 @@
-import React from 'react';
-
-// Dummy Data for Doctors
-const doctorsData = [
-  {
-    id: 1,
-    name: 'Dr. John Doe',
-    specialty: 'Cardiologist',
-    phone: '+1 234 567 890',
-    email: 'johndoe@example.com',
-  },
-  {
-    id: 2,
-    name: 'Dr. Jane Smith',
-    specialty: 'Neurologist',
-    phone: '+1 987 654 321',
-    email: 'janesmith@example.com',
-  },
-  {
-    id: 3,
-    name: 'Dr. Emily Johnson',
-    specialty: 'Orthopedic',
-    phone: '+1 555 123 456',
-    email: 'emilyjohnson@example.com',
-  },
-  {
-    id: 4,
-    name: 'Dr. Michael Brown',
-    specialty: 'Pediatrician',
-    phone: '+1 888 765 432',
-    email: 'michaelbrown@example.com',
-  },
-];
+import React, { useEffect, useState } from 'react';
 
 const DoctorsList = () => {
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [deleting, setDeleting] = useState(null); // Track the deleting process
+
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+
+  // Function to fetch doctors
+  const fetchDoctors = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:3000/api/getadoctors');
+      if (!response.ok) {
+        throw new Error('Failed to fetch doctors');
+      }
+      const data = await response.json();
+      setDoctors(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to delete a doctor
+  const deleteDoctor = async (id) => {
+    setDeleting(id); // Mark the doctor as being deleted
+    try {
+      const response = await fetch(`http://localhost:3000/api/doctord/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete doctor');
+      }
+
+      // Remove the deleted doctor from the state
+      setDoctors(doctors.filter((doctor) => doctor._id !== id));
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h2 className="text-2xl font-bold mb-4">Doctors in Our Hospital</h2>
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-lg shadow-md">
-          <thead>
-            <tr>
-              <th className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b">Name</th>
-              <th className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b">Specialty</th>
-              <th className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b">Phone</th>
-              <th className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b">Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            {doctorsData.map((doctor) => (
-              <tr key={doctor.id}>
-                <td className="py-3 px-6 text-sm text-gray-700 border-b">{doctor.name}</td>
-                <td className="py-3 px-6 text-sm text-gray-700 border-b">{doctor.specialty}</td>
-                <td className="py-3 px-6 text-sm text-gray-700 border-b">{doctor.phone}</td>
-                <td className="py-3 px-6 text-sm text-gray-700 border-b">{doctor.email}</td>
+
+      {loading ? (
+        <p className="text-gray-600">Loading...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white rounded-lg shadow-md">
+            <thead>
+              <tr>
+                <th className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b">Name</th>
+                <th className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b">Specialty</th>
+                <th className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b">Phone</th>
+                <th className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {doctors.map((doctor) => (
+                <tr key={doctor._id}>
+                  <td className="py-3 px-6 text-sm text-gray-700 border-b">{doctor.name}</td>
+                  <td className="py-3 px-6 text-sm text-gray-700 border-b">{doctor.specialization}</td>
+                  <td className="py-3 px-6 text-sm text-gray-700 border-b">{doctor.phone}</td>
+                  <td className="py-3 px-6 text-sm text-gray-700 border-b">
+                    <button
+                      onClick={() => deleteDoctor(doctor._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
+                      disabled={deleting === doctor._id}
+                    >
+                      {deleting === doctor._id ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React ,{ useState } from 'react'
 import AddPrescription from "../Doctor/AddPrescription.jsx"
 import ViewPrescription from "../Doctor/ViewPrescription.jsx"
-import ViewPatientData from "../Doctor/ViewPatientData.jsx"
 const Doctor = () => {
     const [selectedTab, setSelectedTab] = useState('AddPrescription');
   
@@ -10,9 +9,7 @@ const Doctor = () => {
         case 'AddPrescription':
           return <AddPrescription />;
         case 'ViewPrescription':
-          return <ViewPrescription/>;   
-        case 'ViewPatientData':
-            return <ViewPatientData/>   
+          return <ViewPrescription/>;     
         default:
           return <AddPrescription />;
       }
@@ -37,12 +34,7 @@ const Doctor = () => {
               >
                 View Prescription
               </li>
-              <li
-                className="mb-4 cursor-pointer hover:bg-gray-700 p-2 rounded transition-all duration-300"
-                onClick={() => setSelectedTab('ViewPatientData')}
-              >
-                View Patient Data
-              </li>
+              
             </ul>
           </div>
         </div>
